@@ -2,8 +2,7 @@
 This repository contains the modules, tutorials, and exercises for the Advance Programming Course.
 
 ## Table of Contents
-1. [Module 1](#module-1)
-
+1. [Module 1](#module-1---coding-standard)
 
 ## Module 1 - Coding Standard
 
@@ -99,3 +98,94 @@ This repository contains the modules, tutorials, and exercises for the Advance P
       </tr>
      ```
         * `th:text="${#strings.escapeXml(product.productName)"` encodes the product name.
+
+### Reflection 2: Unit Testing
+#### **Unit Testing Principles**
+1. **Feelings about Unit Testing**
+   * Writing unit tests initially feels challenging but becomes more natural with practice.
+   * Unit testing is essential for ensuring code quality and preventing regressions.
+   * It provides confidence that code works as expected and helps identify bugs early.
+2. **Quantity of Unit Testing**
+   * The number of unit tests should be determined by functionality, not arbitrary metrics
+   * Each test should cover a specific scenario, such as:
+     * Expected behavior
+     * Edge cases
+     * Error conditions
+     * Integration with other components
+3. **Code Coverage and Test Sufficiency**
+   * Code coverage is a useful metric but not the sole indicator of test quality
+   * 100% code coverage does not guarantee bug-free code because:
+     * Tests might not cover all possible input combinations
+     * Logic errors can exist even with full path coverage
+     * Integration issues may not be detected
+     * Edge cases might be missed despite covering all lines
+   * Quality tests should focus on:
+     * Testing business logic
+     * Verifying edge cases
+     * Ensuring error handling
+     * Validating integration points
+4. **Functional Test Code Cleanliness Issues**
+   * Code Duplication:
+     * Setup procedures are repeated across test classes
+     * Instance variables (serverPort, testBaseUrl, baseUrl) are duplicated
+     * WebDriver initialization and cleanup code is repeated
+   * Reasons for Concern:
+     * Violates DRY (Don't Repeat Yourself) principle
+     * Makes maintenance more difficult
+     * Increases chance of inconsistencies
+     * Reduces code readability
+   * Suggested Improvements:
+     1. **Create a Base Test Class**
+        ```java
+        public abstract class BaseFunctionalTest {
+        @LocalServerPort
+        protected int serverPort;
+
+           @Value("${app.baseUrl:http://localhost}")
+           protected String testBaseUrl;
+
+           protected String baseUrl;
+           protected WebDriver driver;
+
+           @BeforeEach
+           void setupTest() {
+               baseUrl = String.format("%s:%d", testBaseUrl, serverPort);
+           }
+        }
+        ```
+     2. **Implement Page Object Pattern**
+        ```java
+        public class ProductPage {
+            private final WebDriver driver;
+
+            public ProductPage(WebDriver driver) {
+                this.driver = driver;
+            }
+
+            public void createProduct(String name, String quantity) {
+                WebElement nameInput = driver.findElement(By.name("productName"));
+                WebElement quantityInput = driver.findElement(By.name("productQuantity"));
+                // ... rest of the implementation
+            }
+        }
+        ```
+     3. **Create Test Helper Methods**
+        ```java
+        protected void waitForUrl(String urlPart) {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            wait.until(ExpectedConditions.urlContains(urlPart));
+        }
+        
+        protected void waitForText(String text) {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            wait.until(ExpectedConditions.textToBePresentInElementLocated(
+                By.tagName("body"), text));
+        }
+        ```
+   * These improvements would:
+     * Reduce code duplication
+     * Improve maintainability
+     * Make tests more readable
+     * Create a more sustainable test architecture
+     * Make it easier to add new test cases
+     * Reduce the likelihood of inconsistencies across test implementations
