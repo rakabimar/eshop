@@ -17,6 +17,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product create(Product product) {
+        if (product.getProductName().isBlank() || product.getProductQuantity() < 1) {
+            throw new IllegalArgumentException("Invalid input");
+        }
         return productRepository.create(product);
     }
 
