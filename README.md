@@ -3,6 +3,7 @@ This repository contains the modules, tutorials, and exercises for the Advance P
 
 ## Table of Contents
 1. [Module 1](#module-1---coding-standard)
+2. [Module 2](#)
 
 ## Module 1 - Coding Standard
 
@@ -189,3 +190,29 @@ This repository contains the modules, tutorials, and exercises for the Advance P
      * Create a more sustainable test architecture
      * Make it easier to add new test cases
      * Reduce the likelihood of inconsistencies across test implementations
+## Module 2 - CI/CD & DevOps
+### Reflection 1: Fixing Issues, Continuous Integration and Continuous Deployment
+1. **Code Quality Issues Fixed and Strategy**
+   * **Duplicated string literals**:
+     * **Issue**: The strings `"product"` and `"redirect:/product/list"` were used multiple times in `ProductController.java`.
+     * **Fix**: Defined constants (`PRODUCT_ATTRIBUTE` and `REDIRECT_LIST`) to avoid duplication, improving maintainability.
+     * **Strategy**:   Using constants makes the code cleaner, easier to update, and less error-prone.
+   * **Empty test method (`contextLoads`) in `EshopApplicationTests.java`**:
+     * **Issue**: SonarCloud suggested either documenting why the method is empty or throwing an exception.
+     * **Fix**: Added a comment explaining the purpose of the method.
+     * **Strategy**: This follows best practices in unit testing, ensuring clarity for future developers.
+   * **Unused import in `ProductService.java`:**
+     * **Issue**: The `java.util.Optional` import was not used.
+     * **Fix**: Removed the unnecessary import.
+     * **Strategy**: Removing unused imports reduces clutter and improves code readability.
+
+2. **CI/CD Reflection**:
+   * The current implementation meets the definition of Continuous Integration (CI) but only partially meets Continuous Deployment (CD) due to the deployment method used:
+   * **Continuous Integration (CI) is achieved because:**
+     * Every push triggers automated test execution to verify the code's correctness.
+     * Static code analysis with SonarCloud ensures code quality.
+     * The pipeline detects potential bugs and security vulnerabilities early in the development process.
+   * **Continuous Deployment (CD) is partially implemented because:**
+     * Instead of defining an explicit workflow for auto-deployment on push, I enabled the Autodeployment option in Koyeb, allowing the platform to handle deployment automatically.
+     * While the deployment is automated, a push-based GitHub Action could further streamline the process. This approach is not possible due to the free plan used in Koyeb deployment.
+     * The current setup ensures that every commit merged into the main branch automatically deploys the latest version of the web app to the production environment.
