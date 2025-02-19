@@ -9,27 +9,26 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
-
 @Controller
 @RequestMapping("/product")
 public class ProductController {
+
+    private static final String PRODUCT_ATTRIBUTE = "product"; // Define a constant
 
     @Autowired
     private ProductService service;
 
     @GetMapping("/create")
     public String createProductPage(Model model) {
-        model.addAttribute("product", new Product());
+        model.addAttribute(PRODUCT_ATTRIBUTE, new Product()); // Use constant
         return "createProduct";
     }
 
     @PostMapping("/create")
     public String createProductPost(@Valid @ModelAttribute Product product, BindingResult result, Model model) {
         if (result.hasErrors()) {
-            model.addAttribute("product", product);
-            return "createProduct"; // Kembali ke form jika ada error
+            model.addAttribute(PRODUCT_ATTRIBUTE, product); // Use constant
+            return "createProduct";
         }
         service.create(product);
         return "redirect:/product/list";
@@ -47,7 +46,7 @@ public class ProductController {
         if (existingProduct == null) {
             return "redirect:/product/list";
         }
-        model.addAttribute("product", existingProduct);
+        model.addAttribute(PRODUCT_ATTRIBUTE, existingProduct); // Use constant
         return "editProduct";
     }
 
