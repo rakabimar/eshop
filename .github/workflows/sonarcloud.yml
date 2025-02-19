@@ -29,10 +29,8 @@
 name: SonarCloud analysis
 
 on:
-  push:
-    branches: {}
-  pull_request:
-    branches: {}
+  push: {}         # Trigger on every push to every branch
+  pull_request: {} # Trigger on every pull request
   workflow_dispatch:
 
 permissions:
