@@ -4,6 +4,7 @@ This repository contains the modules, tutorials, and exercises for the Advance P
 ## Table of Contents
 1. [Module 1](#module-1---coding-standard)
 2. [Module 2](#)
+3. [Module 3](#)
 
 ## Module 1 - Coding Standard
 
@@ -190,6 +191,7 @@ This repository contains the modules, tutorials, and exercises for the Advance P
      * Create a more sustainable test architecture
      * Make it easier to add new test cases
      * Reduce the likelihood of inconsistencies across test implementations
+
 ## Module 2 - CI/CD & DevOps
 ### Reflection 1: Fixing Issues, Continuous Integration and Continuous Deployment
 1. **Code Quality Issues Fixed and Strategy**
@@ -216,3 +218,83 @@ This repository contains the modules, tutorials, and exercises for the Advance P
      * Instead of defining an explicit workflow for auto-deployment on push, I enabled the Autodeployment option in Koyeb, allowing the platform to handle deployment automatically.
      * While the deployment is automated, a push-based GitHub Action could further streamline the process. This approach is not possible due to the free plan used in Koyeb deployment.
      * The current setup ensures that every commit merged into the main branch automatically deploys the latest version of the web app to the production environment.
+
+## Module 3 - Maintainability & OO Principles
+### Reflection 1: SOLID Principles Implementation
+1. **Principles applied in the project**
+   - **Single Responsibility Principle (SRP):**  
+     Each class has one clear responsibility.  
+     *Example:*
+   - `MainController.java` only handles the home page:
+     ```java
+     @Controller
+     public class MainController {
+         @GetMapping("")
+         public String mainPage() {
+             return "homePage";
+         }
+     }
+     ```
+   - `ProductController.java` and `CarController.java` manage product and car operations, respectively.
+
+   - **Open-Closed Principle (OCP):**  
+     Classes are open for extension but closed for modification.  
+     *Example:*
+       - We use generic interfaces like `BaseService<T>` and `BaseRepository<T>` to allow adding new entity services without changing existing code.
+
+   - **Liskov Substitution Principle (LSP):**  
+     Subtypes can replace their base types without affecting correctness.  
+     *Example:*
+       - `CarServiceImpl` implements `CarService`. Any class expecting a `CarService` can use `CarServiceImpl` without unexpected behavior:
+         ```java
+         public class CarServiceImpl implements CarService { … }
+         ```
+
+   - **Interface Segregation Principle (ISP):**  
+     Clients only depend on methods they use.  
+     *Example:*
+       - Instead of one large service interface, we have focused interfaces like `ProductService` and `CarService` that extend a smaller `BaseService<T>`:
+         ```java
+         public interface ProductService extends BaseService<Product> { … }
+         ```
+
+   - **Dependency Inversion Principle (DIP):**  
+     High-level modules depend on abstractions, not on concrete implementations.  
+     *Example:*
+       - Controllers depend on service interfaces. For instance, `ProductController` is injected with `ProductService`:
+         ```java
+         @Autowired
+         private ProductService productService;
+         ```
+2. **Advantages of applying SOLID principles**
+    - **Improved Maintainability:**
+      - **SRP:** Changes to one responsibility (e.g., modifying product logic) affect only the related class.
+      - *Example:* Updating validation rules in `ProductServiceImpl` does not require changes in `ProductController`.
+
+    - **Ease of Extension:**
+        - **OCP:** New features can be added by extending existing abstractions.
+        - *Example:* Adding a new entity type (e.g., `Order`) can be achieved by implementing a new service interface that extends `BaseService<Order>` without altering current services.
+
+    - **Enhanced Testability:**
+        - **DIP:** Controllers and services depend on interfaces, which makes it easier to mock dependencies during testing.
+        - *Example:* In `ProductControllerTest`, we mock `ProductService` to test controller logic in isolation.
+
+    - **Robustness and Flexibility:**
+        - **LSP:** Replacing a service with a different implementation won’t break the system, which supports refactoring and code reuse.
+        - **ISP:** Smaller, focused interfaces reduce unnecessary dependencies and complexity.
+3. **Disadvantages of not applying SOLID principles**
+   - **Tight Coupling:**
+       - Without **DIP**, controllers might depend directly on concrete classes, making changes ripple across the codebase and complicating testing.
+       - *Example:* If `ProductController` directly instantiated `ProductServiceImpl`, any change in service implementation would force modifications in the controller.
+
+   - **Monolithic Classes:**
+       - Without **SRP**, classes become responsible for multiple tasks, making them harder to maintain and understand.
+       - *Example:* A single controller handling both product and car operations would mix responsibilities, increasing the risk of bugs.
+
+   - **Inflexibility:**
+       - Without **OCP**, any new feature may require modifications to existing classes rather than simply extending them, leading to regression risks.
+       - *Example:* Modifying a monolithic service to add logging, validation, or new business rules could inadvertently affect existing functionality.
+
+   - **Difficult Testing:**
+       - Without **ISP**, large interfaces force clients to implement methods they do not need, complicating mock creation and testing.
+       - *Example:* If a service interface bundled product, car, and order operations together, tests for product-related logic would have to manage unrelated methods.
