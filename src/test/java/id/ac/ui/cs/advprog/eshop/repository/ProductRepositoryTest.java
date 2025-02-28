@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -64,27 +65,27 @@ public class ProductRepositoryTest {
     void testFindById_ProductFound() {
         Product product = new Product("id-1", "Product 1", 10);
         productRepository.create(product);
-        Product found = productRepository.findById("id-1");
-        assertNotNull(found);
+        Optional<Product> foundOpt = productRepository.findById("id-1");
+        assertTrue(foundOpt.isPresent());
+        Product found = foundOpt.get();
         assertEquals("Product 1", found.getProductName());
     }
 
     @Test
     void testFindById_NotFound() {
-        Product found = productRepository.findById("non-existent-id");
-        assertNull(found);
+        Optional<Product> found = productRepository.findById("non-existent-id");
+        assertFalse(found.isPresent());
     }
 
     @Test
     void testFindById_MultipleProducts() {
-        // Add multiple products so that the matching one is not the first
         Product product1 = new Product("id-1", "Product 1", 10);
         Product product2 = new Product("id-2", "Product 2", 20);
         productRepository.create(product1);
         productRepository.create(product2);
-        // This will iterate product1 (non-match) then product2 (match)
-        Product found = productRepository.findById("id-2");
-        assertNotNull(found);
+        Optional<Product> foundOpt = productRepository.findById("id-2");
+        assertTrue(foundOpt.isPresent());
+        Product found = foundOpt.get();
         assertEquals("Product 2", found.getProductName());
     }
 
@@ -93,8 +94,9 @@ public class ProductRepositoryTest {
         Product product = new Product("id-1", "Product 1", 10);
         productRepository.create(product);
         Product updatedProduct = new Product("id-1", "Product 1 Updated", 15);
-        Product result = productRepository.update(updatedProduct);
-        assertNotNull(result);
+        Optional<Product> resultOpt = productRepository.update(updatedProduct);
+        assertTrue(resultOpt.isPresent());
+        Product result = resultOpt.get();
         assertEquals("Product 1 Updated", result.getProductName());
         assertEquals(15, result.getProductQuantity());
     }
@@ -102,28 +104,27 @@ public class ProductRepositoryTest {
     @Test
     void testEditProduct_NotFound() {
         Product updatedProduct = new Product("non-existing-id", "Non Existing Product", 200);
-        Product result = productRepository.update(updatedProduct);
-        assertNull(result);
+        Optional<Product> resultOpt = productRepository.update(updatedProduct);
+        assertFalse(resultOpt.isPresent());
     }
 
     @Test
     void testUpdate_MultipleProducts() {
-        // Add multiple products so that the update occurs in the middle of the list
         Product product1 = new Product("id-1", "Product 1", 10);
         Product product2 = new Product("id-2", "Product 2", 20);
         productRepository.create(product1);
         productRepository.create(product2);
 
-        // Update product2 which is not the first element in the list
         Product updatedProduct2 = new Product("id-2", "Updated Product 2", 30);
-        Product result = productRepository.update(updatedProduct2);
-        assertNotNull(result);
+        Optional<Product> resultOpt = productRepository.update(updatedProduct2);
+        assertTrue(resultOpt.isPresent());
+        Product result = resultOpt.get();
         assertEquals("Updated Product 2", result.getProductName());
         assertEquals(30, result.getProductQuantity());
 
-        // Verify that product1 remains unchanged
-        Product found1 = productRepository.findById("id-1");
-        assertNotNull(found1);
+        Optional<Product> found1Opt = productRepository.findById("id-1");
+        assertTrue(found1Opt.isPresent());
+        Product found1 = found1Opt.get();
         assertEquals("Product 1", found1.getProductName());
     }
 
@@ -138,7 +139,6 @@ public class ProductRepositoryTest {
 
     @Test
     void testDeleteProduct_NotFound() {
-        // Should not throw any exception when the product is not found
         assertDoesNotThrow(() -> productRepository.delete("non-existing-id"));
     }
 }

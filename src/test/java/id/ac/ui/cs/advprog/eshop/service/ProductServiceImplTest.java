@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -71,42 +72,42 @@ class ProductServiceImplTest {
 
     @Test
     void testFindById() {
-        when(productRepository.findById("1")).thenReturn(sampleProduct);
-        Product found = productService.findById("1");
-        assertNotNull(found);
+        when(productRepository.findById("1")).thenReturn(Optional.of(sampleProduct));
+        Optional<Product> foundOpt = productService.findById("1");
+        assertTrue(foundOpt.isPresent());
+        Product found = foundOpt.get();
         assertEquals("Sample Product", found.getProductName());
         verify(productRepository, times(1)).findById("1");
     }
 
     @Test
     void testEditProduct_Success() {
-        when(productRepository.update(sampleProduct)).thenReturn(sampleProduct);
-        Product updatedProduct = productService.update(sampleProduct);
-        assertNotNull(updatedProduct);
-        assertEquals("Sample Product", updatedProduct.getProductName());
-        assertEquals(10, updatedProduct.getProductQuantity());
+        // Simulate successful update by returning Optional.of(updatedProduct)
+        when(productRepository.update(sampleProduct)).thenReturn(Optional.of(sampleProduct));
+        // Call updateById method which delegates to repository.update
+        productService.updateById("1", sampleProduct);
         verify(productRepository, times(1)).update(sampleProduct);
     }
 
     @Test
     void testEditProduct_Failure_ProductNotFound() {
-        when(productRepository.update(sampleProduct)).thenReturn(null);
-        Product updatedProduct = productService.update(sampleProduct);
-        assertNull(updatedProduct);
+        // Simulate update failure by returning Optional.empty()
+        when(productRepository.update(sampleProduct)).thenReturn(Optional.empty());
+        productService.updateById("1", sampleProduct);
         verify(productRepository, times(1)).update(sampleProduct);
     }
 
     @Test
     void testDeleteProduct_Success() {
         doNothing().when(productRepository).delete("1");
-        assertDoesNotThrow(() -> productService.delete("1"));
+        assertDoesNotThrow(() -> productService.deleteById("1"));
         verify(productRepository, times(1)).delete("1");
     }
 
     @Test
     void testDeleteProduct_Failure_ProductNotFound() {
         doNothing().when(productRepository).delete("999");
-        assertDoesNotThrow(() -> productService.delete("999"));
+        assertDoesNotThrow(() -> productService.deleteById("999"));
         verify(productRepository, times(1)).delete("999");
     }
 }

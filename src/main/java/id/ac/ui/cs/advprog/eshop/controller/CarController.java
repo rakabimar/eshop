@@ -15,7 +15,7 @@ import java.util.Optional;
 public class CarController {
 
     private static final String CAR_ATTRIBUTE = "car"; // Constant for car attribute key
-    private static final String REDIRECT_CAR_LIST = "redirect:/car/list"; // Constant for redirecting to car list
+    private static final String REDIRECT_CAR_LIST = "redirect:/car/listCar"; // Constant for redirecting to car list
 
     @Autowired
     private CarService carService;
@@ -32,7 +32,7 @@ public class CarController {
         return REDIRECT_CAR_LIST;
     }
 
-    @GetMapping("/list")
+    @GetMapping("/listCar")
     public String carListPage(Model model) {
         List<Car> allCars = carService.findAll();
         model.addAttribute("cars", allCars);
