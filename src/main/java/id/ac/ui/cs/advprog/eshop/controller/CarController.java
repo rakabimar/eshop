@@ -20,13 +20,13 @@ public class CarController {
     @Autowired
     private CarService carService;
 
-    @GetMapping("/create")
+    @GetMapping("/createCar")
     public String createCarPage(Model model) {
         model.addAttribute(CAR_ATTRIBUTE, new Car());
         return "createCar";
     }
 
-    @PostMapping("/create")
+    @PostMapping("/createCar")
     public String createCarPost(@ModelAttribute Car car) {
         carService.create(car);
         return REDIRECT_CAR_LIST;
@@ -39,7 +39,7 @@ public class CarController {
         return "carList";
     }
 
-    @GetMapping("/edit/{carId}")
+    @GetMapping("/editCar/{carId}")
     public String editCarPage(@PathVariable("carId") String carId, Model model) {
         Optional<Car> carOptional = carService.findById(carId);
         if (carOptional.isEmpty()) {
@@ -49,13 +49,13 @@ public class CarController {
         return "editCar";
     }
 
-    @PostMapping("/edit")
+    @PostMapping("/editCar")
     public String editCarPost(@ModelAttribute Car car) {
         carService.updateById(car.getCarId(), car);
         return REDIRECT_CAR_LIST;
     }
 
-    @PostMapping("/delete")
+    @PostMapping("/deleteCar")
     public String deleteCar(@RequestParam("carId") String carId) {
         carService.deleteById(carId);
         return REDIRECT_CAR_LIST;
