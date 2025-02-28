@@ -9,7 +9,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CarRepositoryTest {
+class CarRepositoryTest {
 
     private CarRepository carRepository;
 
