@@ -1,14 +1,21 @@
 package id.ac.ui.cs.advprog.eshop.service;
 
-import java.util.List;
+import id.ac.ui.cs.advprog.eshop.model.Car;
 import java.util.Optional;
 
-import id.ac.ui.cs.advprog.eshop.model.Car;
-
-public interface CarService {
+public interface CarService extends BaseService<Car> {
+    @Override
     Car create(Car car);
-    List<Car> findAll();
-    Optional<Car> findById(String carId);
-    void updateById(String carId, Car car);
-    void deleteById(String carId);
+
+    @Override
+    java.util.List<Car> findAll();
+
+    @Override
+    Optional<Car> findById(String id);
+
+    @Override
+    void updateById(String id, Car car);
+
+    @Override
+    void deleteById(String id);
 }

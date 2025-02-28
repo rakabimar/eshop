@@ -1,48 +1,47 @@
 package id.ac.ui.cs.advprog.eshop.service;
 
+import id.ac.ui.cs.advprog.eshop.model.Car;
+import id.ac.ui.cs.advprog.eshop.repository.CarRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import id.ac.ui.cs.advprog.eshop.model.Car;
-import id.ac.ui.cs.advprog.eshop.repository.CarRepository;
-
 @Service
 public class CarServiceImpl implements CarService {
+
     @Autowired
     private CarRepository carRepository;
 
     @Override
     public Car create(Car car) {
-        carRepository.create(car);
-        return car;
+        return carRepository.create(car);
     }
 
     @Override
     public List<Car> findAll() {
         Iterator<Car> carIterator = carRepository.findAll();
-        List<Car> carsList = new ArrayList<>();
-        carIterator.forEachRemaining(carsList::add);
-        return carsList;
+        List<Car> allCars = new ArrayList<>();
+        carIterator.forEachRemaining(allCars::add);
+        return allCars;
     }
 
     @Override
-    public Optional<Car> findById(String carId) {
-        Optional<Car> car = carRepository.findById(carId);
-        return car;
+    public Optional<Car> findById(String id) {
+        return carRepository.findById(id);
     }
 
     @Override
-    public void updateById(String carId, Car car) {
-        carRepository.update(carId, car);
+    public void updateById(String id, Car car) {
+        // Optionally, you can validate that id matches car.getCarId()
+        carRepository.update(car);
     }
 
     @Override
-    public void deleteById(String carId) {
-        carRepository.delete(carId);
+    public void deleteById(String id) {
+        carRepository.delete(id);
     }
 }
