@@ -17,8 +17,12 @@ public class CarController {
     private static final String CAR_ATTRIBUTE = "car"; // Constant for car attribute key
     private static final String REDIRECT_CAR_LIST = "redirect:/car/listCar"; // Constant for redirecting to car list
 
+    private final CarService carService;
+
     @Autowired
-    private CarService carService;
+    public CarController(CarService carService) {
+        this.carService = carService;
+    }
 
     @GetMapping("/createCar")
     public String createCarPage(Model model) {
