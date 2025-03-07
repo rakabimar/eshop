@@ -27,8 +27,8 @@ public class PaymentByVoucherTest {
 
     @Test
     void testSetValidPaymentData() {
-        this.paymentData.put("voucherCode", "ESHOP7896541230");
-        PaymentByVoucher payment = new PaymentByVoucher("pmt-vch-002", PaymentMethod.BY_VOUCHER.getValue(), this.paymentData);
+        this.paymentData.put("voucherCode", "ESHOP6743FHD8521");
+        PaymentByVoucher payment = new PaymentByVoucher("13652556-012a-4c07-b546-54eb1396d79b", PaymentMethod.BY_VOUCHER.getValue(), this.paymentData);
         payment.setPaymentData(this.paymentData);
         assertEquals(PaymentStatus.SUCCESS.getValue(), payment.getStatus());
     }
