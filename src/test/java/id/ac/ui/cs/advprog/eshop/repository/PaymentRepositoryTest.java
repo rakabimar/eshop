@@ -11,7 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class PaymentRepositoryTest {
     PaymentRepository paymentRepository;
@@ -21,21 +22,19 @@ public class PaymentRepositoryTest {
     void setUp() {
         this.paymentRepository = new PaymentRepository();
         this.payments = new ArrayList<>();
+        Map<String, String> validVoucherData = new HashMap<>();
+        validVoucherData.put("voucherCode", "SHOP123XYZ");
 
-        // Use new sample data values
-        Map<String, String> voucherData = new HashMap<>();
-        voucherData.put("voucherCode", "ESHOPNEWCODE0001");
+        Map<String, String> invalidVoucherData = new HashMap<>();
+        invalidVoucherData.put("voucherCode", "INVALID_VOUCHER_CODE_999");
 
-        Map<String, String> wrongVoucherData = new HashMap<>();
-        wrongVoucherData.put("voucherCode", "WRONGCODE002");
+        Map<String, String> validBankData = new HashMap<>();
+        validBankData.put("bankName", "Bank CyberSafe");
+        validBankData.put("referenceCode", "REF987654321");
 
-        Map<String, String> bankData = new HashMap<>();
-        bankData.put("bankName", "New Bank");
-        bankData.put("referenceCode", "REF2023XYZ");
-
-        Payment payment1 = new Payment("pay-001", PaymentMethod.BY_VOUCHER, PaymentStatus.SUCCESS, voucherData);
-        Payment payment2 = new Payment("pay-002", PaymentMethod.BY_VOUCHER, PaymentStatus.REJECTED, wrongVoucherData);
-        Payment payment3 = new Payment("pay-003", PaymentMethod.BY_TRANSFER, PaymentStatus.SUCCESS, bankData);
+        Payment payment1 = new Payment("pmt-001", PaymentMethod.BY_VOUCHER.getValue(), PaymentStatus.SUCCESS.getValue(), validVoucherData);
+        Payment payment2 = new Payment("pmt-002", PaymentMethod.BY_VOUCHER.getValue(), PaymentStatus.REJECTED.getValue(), invalidVoucherData);
+        Payment payment3 = new Payment("pmt-003", PaymentMethod.BY_TRANSFER.getValue(), PaymentStatus.SUCCESS.getValue(), validBankData);
 
         payments.add(payment1);
         payments.add(payment2);
@@ -44,10 +43,10 @@ public class PaymentRepositoryTest {
 
     @Test
     void testSaveFromCreate() {
-        Payment payment = payments.get(0);
+        Payment payment = payments.getFirst();
         Payment result = paymentRepository.save(payment);
 
-        Payment paymentResult = paymentRepository.findById(payments.get(0).getId());
+        Payment paymentResult = paymentRepository.findById(payments.get(1).getId());
         assertEquals(payment.getId(), result.getId());
         assertEquals(payment.getId(), paymentResult.getId());
         assertEquals(payment.getMethod(), paymentResult.getMethod());
@@ -59,15 +58,14 @@ public class PaymentRepositoryTest {
     void testSaveFromEdit() {
         Payment payment = payments.get(1);
         paymentRepository.save(payment);
-        // Update payment status from REJECTED to SUCCESS.
-        Payment modifiedPayment = new Payment(payment.getId(), payment.getMethod(), PaymentStatus.SUCCESS, payment.getPaymentData());
+        Payment modifiedPayment = new Payment(payment.getId(), payment.getMethod(), PaymentStatus.SUCCESS.getValue(), payment.getPaymentData());
         Payment result = paymentRepository.save(modifiedPayment);
 
-        Payment paymentResult = paymentRepository.findById(payment.getId());
+        Payment paymentResult = paymentRepository.findById(payments.get(1).getId());
         assertEquals(payment.getId(), result.getId());
         assertEquals(payment.getId(), paymentResult.getId());
         assertEquals(payment.getMethod(), paymentResult.getMethod());
-        assertEquals(PaymentStatus.SUCCESS, paymentResult.getStatus());
+        assertEquals(PaymentStatus.SUCCESS.getValue(), paymentResult.getStatus());
         assertEquals(payment.getPaymentData(), paymentResult.getPaymentData());
     }
 
@@ -90,7 +88,7 @@ public class PaymentRepositoryTest {
             paymentRepository.save(payment);
         }
 
-        Payment paymentResult = paymentRepository.findById("non-existent-id");
+        Payment paymentResult = paymentRepository.findById("nonexistent-123");
         assertNull(paymentResult);
     }
 
@@ -101,6 +99,6 @@ public class PaymentRepositoryTest {
         }
 
         List<Payment> paymentList = paymentRepository.findAll();
-        assertEquals(payments.size(), paymentList.size());
+        assertEquals(paymentList.size(), payments.size());
     }
 }

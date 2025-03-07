@@ -8,14 +8,14 @@ import java.util.List;
 
 @Repository
 public class PaymentRepository {
+    private List<Payment> paymentData = new ArrayList<>();
 
-    private final List<Payment> paymentData = new ArrayList<>();
-
-    // Saves a Payment; if a Payment with the same id exists, update it.
     public Payment save(Payment payment) {
-        for (int i = 0; i < paymentData.size(); i++) {
-            if (paymentData.get(i).getId().equals(payment.getId())) {
-                paymentData.set(i, payment);
+        for (int i=0; i<paymentData.size(); i++) {
+            Payment p = paymentData.get(i);
+            if (p.getId().equals(payment.getId())){
+                paymentData.remove(i);
+                paymentData.add(i, payment);
                 return payment;
             }
         }
@@ -23,18 +23,16 @@ public class PaymentRepository {
         return payment;
     }
 
-    // Finds a Payment by its id; returns null if not found.
     public Payment findById(String id) {
-        for (Payment payment : paymentData) {
-            if (payment.getId().equals(id)) {
-                return payment;
+        for (Payment p : paymentData) {
+            if (p.getId().equals(id)) {
+                return p;
             }
         }
         return null;
     }
 
-    // Returns all saved Payment objects.
     public List<Payment> findAll() {
-        return new ArrayList<>(paymentData);
+        return paymentData;
     }
 }
