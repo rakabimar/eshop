@@ -5,6 +5,7 @@ This repository contains the modules, tutorials, and exercises for the Advance P
 1. [Module 1](#module-1---coding-standard)
 2. [Module 2](#)
 3. [Module 3](#)
+4. [Module 4](#)
 
 ## Module 1 - Coding Standard
 
@@ -298,3 +299,40 @@ This repository contains the modules, tutorials, and exercises for the Advance P
    - **Difficult Testing:**
        - Without **ISP**, large interfaces force clients to implement methods they do not need, complicating mock creation and testing.
        - *Example:* If a service interface bundled product, car, and order operations together, tests for product-related logic would have to manage unrelated methods.
+
+## Module 4 - Refactoring and TDD
+### Reflection 1: Test-Driven Development workflow Implementation
+1. **TDD Workflow Reflection (Based on Percival, 2017)**
+   - **Usefulness:**  
+     The TDD workflow has been useful in this project as it forced us to write tests before the implementation. This led to:
+     - **Clear objectives:** We defined what the system must do (e.g., correct order status updates, proper CRUD operations) before writing production code.
+     - **Immediate feedback:** Our tests quickly revealed design flaws and uncovered missing functionality, such as handling invalid inputs.
+     - **Design improvement:** TDD guided us to refactor our code (e.g., applying SOLID principles) for better maintainability and testability.
+
+   - **Areas for Improvement:**  
+     In the upcoming development, I would:
+       - **Include more integration tests:** While unit tests are excellent for verifying isolated behavior, integration tests will help ensure that components work well together.
+       - **Refine edge-case coverage:** Increase focus on less common but critical scenarios (e.g., error handling in repository updates).
+       - **Automate regression testing:** Set up continuous integration to run tests automatically on each commit for faster feedback.
+2. **F.I.R.S.T. Testing Principles Reflection**
+   - **Fast:**  
+     - This project's tests run quickly in isolation, enabling rapid feedback during development.  
+     - *Example:* Unit tests for model and repository classes complete in milliseconds.
+
+   - **Independent:**  
+     - Tests are designed to be isolated, but in some cases, shared test data might cause unexpected interactions.
+     - *Next Steps:* I plan to further decouple tests by using more granular mocks and dedicated test fixtures to ensure each test’s independence.
+
+   - **Repeatable:**  
+     - This project's test suite reliably produces the same results when executed multiple times, as they do not depend on external factors.
+     - *Next Steps:* Maintain this reliability by isolating external dependencies (e.g., file systems, databases) using in-memory substitutes.
+
+   - **Self-Validating:**  
+     - Tests automatically check expected results and report failures clearly.  
+     - *Example:* Assertions in tests (e.g., checking that invalid order status throws an exception) clearly indicate what went wrong.
+
+   - **Timely:**  
+     - Tests were written concurrently with production code (TDD), ensuring that testing objectives were met as the system evolved.
+
+   - **Overall Assessment:**  
+     - The test suite mostly adheres to the F.I.R.S.T. principles. Future enhancements will focus on ensuring total independence and possibly adding more descriptive assertions for easier debugging.
