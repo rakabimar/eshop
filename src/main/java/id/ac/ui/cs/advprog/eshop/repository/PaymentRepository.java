@@ -2,28 +2,39 @@ package id.ac.ui.cs.advprog.eshop.repository;
 
 import id.ac.ui.cs.advprog.eshop.model.Payment;
 import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
 public class PaymentRepository {
 
-    // In-memory storage for Payment objects.
+    private final List<Payment> paymentData = new ArrayList<>();
 
-    // Save a Payment object. If a Payment with the same id exists, update it.
+    // Saves a Payment; if a Payment with the same id exists, update it.
     public Payment save(Payment payment) {
-        // TODO: Implement saving logic.
-        return null;
+        for (int i = 0; i < paymentData.size(); i++) {
+            if (paymentData.get(i).getId().equals(payment.getId())) {
+                paymentData.set(i, payment);
+                return payment;
+            }
+        }
+        paymentData.add(payment);
+        return payment;
     }
 
-    // Find a Payment object by its id. Returns null if not found.
+    // Finds a Payment by its id; returns null if not found.
     public Payment findById(String id) {
-        // TODO: Implement search by id.
+        for (Payment payment : paymentData) {
+            if (payment.getId().equals(id)) {
+                return payment;
+            }
+        }
         return null;
     }
 
-    // Retrieve all Payment objects.
+    // Returns all saved Payment objects.
     public List<Payment> findAll() {
-        // TODO: Implement retrieval of all payments.
-        return null;
+        return new ArrayList<>(paymentData);
     }
 }
