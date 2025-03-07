@@ -4,65 +4,105 @@ import id.ac.ui.cs.advprog.eshop.enums.PaymentMethod;
 import id.ac.ui.cs.advprog.eshop.enums.PaymentStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class PaymentTest {
-
-    private Payment payment;
-    private Map<String, String> paymentData;
-
+    private Map<String,String> paymentData;
     @BeforeEach
     void setUp() {
-        // Set up valid payment data, for example using a voucher code.
-        paymentData = new HashMap<>();
-        paymentData.put("voucherCode", "ESHOP1234ABC5678");
-
-        // Create a Payment object using enums.
-        payment = new Payment("p1", PaymentMethod.BY_VOUCHER, PaymentStatus.SUCCESS, paymentData);
+        this.paymentData = new HashMap<String,String>();
+    }
+    @Test
+    void testCreatePaymentInvalidMethod() {
+        paymentData.put("ewallet", "089999999999");
+        assertThrows(IllegalArgumentException.class, () -> {
+            Payment payment = new Payment(
+                    "a1234567-b89c-40de-fghi-123456789abc",
+                    "by-ewallet",
+                    PaymentStatus.SUCCESS.getValue(),
+                    paymentData);
+        });
     }
 
     @Test
-    void testPaymentCreation() {
-        // Verify that the Payment object is created correctly.
-        assertEquals("p1", payment.getId());
-        assertEquals(PaymentMethod.BY_VOUCHER, payment.getMethod());
-        assertEquals(PaymentStatus.SUCCESS, payment.getStatus());
-        assertNotNull(payment.getPaymentData());
-        assertEquals("ESHOP1234ABC5678", payment.getPaymentData().get("voucherCode"));
+    void testCreatePaymentValidStatus() {
+        paymentData.put("voucherCode", "ESHOP12345xyz789");
+        Payment payment = new Payment(
+                "a1234567-b89c-40de-fghi-123456789abc",
+                PaymentMethod.BY_VOUCHER.getValue(),
+                PaymentStatus.SUCCESS.getValue(),
+                paymentData
+        );
+        assertEquals(PaymentStatus.SUCCESS.getValue(), payment.getStatus());
     }
 
     @Test
-    void testSetAndGetStatus() {
-        // Change status to REJECTED and verify.
-        payment.setStatus(PaymentStatus.REJECTED);
-        assertEquals(PaymentStatus.REJECTED, payment.getStatus());
+    void testCreatePaymentInvalidStatus() {
+        paymentData.put("voucherCode", "ESHOP12345xyz789");
+        assertThrows(IllegalArgumentException.class, () -> {
+            Payment payment = new Payment(
+                    "a1234567-b89c-40de-fghi-123456789abc",
+                    PaymentMethod.BY_VOUCHER.getValue(),
+                    "INVALID_STATUS",
+                    paymentData
+            );
+        });
     }
 
     @Test
-    void testSetPaymentData() {
-        // Update the paymentData map and verify.
-        Map<String, String> newData = new HashMap<>();
-        newData.put("bankName", "Bank XYZ");
-        newData.put("referenceCode", "REF123456");
-        payment.setPaymentData(newData);
-        assertEquals("Bank XYZ", payment.getPaymentData().get("bankName"));
-        assertEquals("REF123456", payment.getPaymentData().get("referenceCode"));
+    void testCreatePaymentValidMethod() {
+        paymentData.put("voucherCode", "ESHOP12345xyz789");
+        Payment payment = new Payment(
+                "a1234567-b89c-40de-fghi-123456789abc",
+                PaymentMethod.BY_VOUCHER.getValue(),
+                PaymentStatus.SUCCESS.getValue(),
+                paymentData
+        );
+        assertEquals(PaymentMethod.BY_VOUCHER.getValue(), payment.getMethod());
     }
 
     @Test
-    void testSetInvalidStatusThrowsException() {
-        // Passing null should throw an exception.
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> payment.setStatus(null));
-        assertTrue(exception.getMessage().contains("Status cannot be null"));
+    void testSetStatusInvalid() {
+        paymentData.put("voucherCode", "ESHOP12345xyz789");
+        Payment payment = new Payment(
+                "a1234567-b89c-40de-fghi-123456789abc",
+                PaymentMethod.BY_VOUCHER.getValue(),
+                PaymentStatus.SUCCESS.getValue(),
+                paymentData
+        );
+        assertThrows(IllegalArgumentException.class, () -> payment.setStatus("UNKNOWN_STATUS"));
     }
 
     @Test
-    void testSetInvalidMethodThrowsException() {
-        // Passing null should throw an exception.
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> payment.setMethod(null));
-        assertTrue(exception.getMessage().contains("Method cannot be null"));
+    void testSetStatusToRejected() {
+        paymentData.put("voucherCode", "ESHOP12345xyz789");
+        Payment payment = new Payment(
+                "a1234567-b89c-40de-fghi-123456789abc",
+                PaymentMethod.BY_VOUCHER.getValue(),
+                PaymentStatus.SUCCESS.getValue(),
+                paymentData
+        );
+        payment.setStatus(PaymentStatus.REJECTED.getValue());
+        assertEquals(PaymentStatus.REJECTED.getValue(), payment.getStatus());
+    }
+
+    @Test
+    void testCreateAllValidArguments() {
+        paymentData.put("voucherCode", "ESHOP12345xyz789");
+        Payment payment = new Payment(
+                "a1234567-b89c-40de-fghi-123456789abc",
+                PaymentMethod.BY_VOUCHER.getValue(),
+                PaymentStatus.SUCCESS.getValue(),
+                paymentData
+        );
+        assertEquals("a1234567-b89c-40de-fghi-123456789abc", payment.getId());
+        assertEquals(PaymentMethod.BY_VOUCHER.getValue(), payment.getMethod());
+        assertEquals(PaymentStatus.SUCCESS.getValue(), payment.getStatus());
+        assertEquals(paymentData, payment.getPaymentData());
     }
 }
