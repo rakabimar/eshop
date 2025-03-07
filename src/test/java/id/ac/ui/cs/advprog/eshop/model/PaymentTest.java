@@ -1,5 +1,7 @@
 package id.ac.ui.cs.advprog.eshop.model;
 
+import id.ac.ui.cs.advprog.eshop.enums.PaymentMethod;
+import id.ac.ui.cs.advprog.eshop.enums.PaymentStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,29 +16,34 @@ public class PaymentTest {
 
     @BeforeEach
     void setUp() {
+        // Set up valid payment data, for example using a voucher code.
         paymentData = new HashMap<>();
-        paymentData.put("voucherCode", "ESHOP1234ABC5678");  // Valid voucher code example
-        // Use allowed values: method must be "by-voucher" and status must be "SUCCESS" or "REJECTED"
-        payment = new Payment("p1", "by-voucher", "SUCCESS", paymentData);
+        paymentData.put("voucherCode", "ESHOP1234ABC5678");
+
+        // Create a Payment object using enums.
+        payment = new Payment("p1", PaymentMethod.BY_VOUCHER, PaymentStatus.SUCCESS, paymentData);
     }
 
     @Test
     void testPaymentCreation() {
+        // Verify that the Payment object is created correctly.
         assertEquals("p1", payment.getId());
-        assertEquals("by-voucher", payment.getMethod());
-        assertEquals("SUCCESS", payment.getStatus());
+        assertEquals(PaymentMethod.BY_VOUCHER, payment.getMethod());
+        assertEquals(PaymentStatus.SUCCESS, payment.getStatus());
         assertNotNull(payment.getPaymentData());
         assertEquals("ESHOP1234ABC5678", payment.getPaymentData().get("voucherCode"));
     }
 
     @Test
     void testSetAndGetStatus() {
-        payment.setStatus("REJECTED");
-        assertEquals("REJECTED", payment.getStatus());
+        // Change status to REJECTED and verify.
+        payment.setStatus(PaymentStatus.REJECTED);
+        assertEquals(PaymentStatus.REJECTED, payment.getStatus());
     }
 
     @Test
     void testSetPaymentData() {
+        // Update the paymentData map and verify.
         Map<String, String> newData = new HashMap<>();
         newData.put("bankName", "Bank XYZ");
         newData.put("referenceCode", "REF123456");
@@ -46,14 +53,16 @@ public class PaymentTest {
     }
 
     @Test
-    void testInvalidStatusThrowsException() {
-        // "PENDING" is not allowed as a status based on our implementation.
-        assertThrows(IllegalArgumentException.class, () -> payment.setStatus("PENDING"));
+    void testSetInvalidStatusThrowsException() {
+        // Passing null should throw an exception.
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> payment.setStatus(null));
+        assertTrue(exception.getMessage().contains("Status cannot be null"));
     }
 
     @Test
-    void testInvalidMethodThrowsException() {
-        // "CashOnDelivery" is not allowed as a method based on our implementation.
-        assertThrows(IllegalArgumentException.class, () -> payment.setMethod("CashOnDelivery"));
+    void testSetInvalidMethodThrowsException() {
+        // Passing null should throw an exception.
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> payment.setMethod(null));
+        assertTrue(exception.getMessage().contains("Method cannot be null"));
     }
 }
